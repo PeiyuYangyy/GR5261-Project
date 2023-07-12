@@ -1,0 +1,66 @@
+---
+title: "Untitled"
+author: "SHIYU LU"
+date: "12/14/2022"
+output: html_document
+---
+# Reading Data
+```{r}
+data <- read.csv("/Users/macbook/Downloads/full_close.csv")
+n <- dim(data)[1]
+# data_5 <- data[,2:6]
+data_5 <- data[,c(2,3,5,6)]
+
+
+return <- data_5[2:n,]/data_5[1:(n-1),]-1
+log_return <- log(data_5[2:n,]/data_5[1:(n-1),])
+
+```
+
+# Risk Management
+```{r,eval = FALSE}
+# install.packages("PerformanceAnalytics")
+
+# Normal distribution method
+library(PerformanceAnalytics)
+s = 100000
+VaR.gaussian=sapply(return,function(data_5){-s*VaR(data_5, method="gaussian")})
+VaR.gaussian
+ES.gaussian=sapply(return,function(data_5){-s*ES(data_5, method="gaussian")})
+ES.gaussian
+
+# t distribution method
+library(MASS)
+info <- data.frame(matrix(ncol = 5, nrow = 2))
+
+colnames(info) <- c('PFE_Close', 'JNJ_Close', 'ABBV_Close',
+                  'MRK_Close', 'NVS_Close')
+
+for (i in 1:5){
+  alpha = 0.05
+  fitt = fitdistr(return[,i], "t")
+  param = as.numeric(fitt$estimate)
+  mean = param[1]
+  df = param[3]
+  sd = param[2] * sqrt((df) / (df - 2))
+  lambda = param[2]
+  qalpha = qt(alpha, df = df)
+  VaR_par = -100000 * (mean + lambda * qalpha)
+  es1 = dt(qalpha, df = df) / (alpha)
+  es2=(df+qalpha^2)/(df-1)
+  es3=-mean+lambda*es1*es2
+  ES_par = 100000*es3
+  info[1,i] = VaR_par
+  info[2,i] = ES_par
+}
+
+info
+
+
+#Nonparametrix Method
+VaR.nonparam=sapply(return,function(data_5){-s*VaR(data_5, method="historical")})
+VaR.nonparam
+ES.nonparam=sapply(return,function(data_5){-s*ES(data_5, method="historical")})
+ES.nonparam
+
+```

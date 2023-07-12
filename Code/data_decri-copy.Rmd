@@ -1,0 +1,105 @@
+---
+title: "STAT 5261 Final return"
+output:
+  pdf_document: default
+  html_document: default
+date: "2022-11-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, results  = 'hide', fig.show="hide")
+```
+
+```{r}
+#Prices
+
+data<-read.csv("/Users/yigeyang/Desktop/GR 5261/Final Project/full_close.csv")
+mean_data<-colMeans(data)
+cov_data<-cov(data)
+std_data<-sqrt(diag(cov_data))
+cbind(mean_data,std_data)
+
+```
+
+```{r}
+#Net Return
+
+data<-read.csv("/Users/yigeyang/Desktop/GR 5261/Final Project/full_SP.csv")
+n<-dim(data)[1]
+return<-data[2:n,]/data[1:(n-1),]-1
+return
+write.csv(return,'net return.csv')
+
+```
+
+
+```{r}
+mean_net_return<-colMeans(return)
+cov_net_return<-cov(return)
+std_net_return<-sqrt(diag(cov_return))
+table1<-cbind(mean_net_return, std_net_return)
+
+table1
+
+```
+
+
+
+```{r}
+# Sharpe's Ratio
+rf = 1.73/100/365 
+sharp_ratio<-(mean_net_return-rf)/std_net_return
+
+sort(sharp_ratio)
+sharp_ratio<-data.frame(sharp_ratio)
+
+```
+
+
+```{r}
+#QQ Plot for Net_Return
+layout(matrix(c(1,1,1,1,1,0,2,2,2,2,2,
+                3,3,3,3,3,0,4,4,4,4,4,
+                0,0,0,5,5,5,5,5,0,0,0), 3, 11, byrow = TRUE))
+
+
+qqnorm(return[,1], main = 'QQ plot for PFE')
+qqline(return[,1], col ='blue')
+
+qqnorm(return[,2], main = 'QQ plot for JNJ')
+qqline(return[,2], col ='blue')
+
+qqnorm(return[,3], main = 'QQ plot for MRK')
+qqline(return[,3], col ='blue')
+
+qqnorm(return[,4], main = 'QQ plot for NVS')
+qqline(return[,4], col ='blue')
+
+layout.show(4)
+```
+
+```{r}
+#Histogram for Net_Return
+layout(matrix(c(1,1,1,1,1,0,2,2,2,2,2,
+                3,3,3,3,3,0,4,4,4,4,4,
+                0,0,0,5,5,5,5,5,0,0,0), 3, 11, byrow = TRUE))
+
+
+hist(return[,1], breaks = 30, main = 'Histogram for PFE', xlab = "PFE Net Return" )
+
+
+hist(return[,2], breaks = 30, main = 'Histogram for JNJ', xlab = "JNJ Net Return" )
+
+
+hist(return[,3], breaks = 30, main = 'Histogram for MRK',xlab = "MRK Net Return" )
+
+
+hist(return[,4], breaks = 30, main = 'Histogram for NVS', xlab = "NVS Net Return" )
+
+layout.show(4)
+```
+
+
+
+
+

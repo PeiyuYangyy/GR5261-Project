@@ -1,0 +1,94 @@
+---
+title: "Untitled"
+author: "Hongyi Xu (hx2348)"
+date: "2022-12-06"
+output: html_document
+---
+
+
+```{r warning=FALSE}
+library(forecast)
+library(fGarch)
+library(rugarch)
+library(MASS)
+
+returns<-read.csv('C:/users/hongy/Desktop/return.csv',header=T)
+
+PFEr<-ts(returns[,2],frequency=365)[c(1:1218)]
+
+ts.plot(PFEr)
+```
+
+
+
+
+
+```{r}
+arima_110_111 <- arima(PFEr, order=c(1,1,0), seasonal = list(order = c(1,1,1), period = 12), method="ML")
+
+pred<- predict(arima_110_111, n.ahead = 100)
+U.tr= pred$pred + 1.96*pred$se
+L.tr= pred$pred - 1.96*pred$se
+
+ts.plot(PFEr,xlim=c(1100,length(PFEr))+100,ylim=c(-0.2,0.2), main='Time Series Forcast On PFE Stock Returns',xlab='Time Points',ylab='PFE stock returns')
+lines(U.tr, col="blue", lty="dashed")
+lines(L.tr, col="blue", lty="dashed")
+#Predicted values of transformed data
+points((length(PFEr)+1):(length(PFEr)+100), pred$pred, col="red")
+abline(h=0,col='red')
+```
+```{r}
+JNJr<-ts(returns[,3],frequency=365)[c(1:1218)]
+
+ts.plot(JNJr)
+```
+
+```{r}
+ts.plot(JNJr,xlim=c(1100,length(JNJr))+100,ylim=c(-0.2,0.2), main='Time Series Forcast on JNJ Stock Returns',xlab='Time Points',ylab='JNJ Stock Returns')
+lines(U.tr, col="blue", lty="dashed")
+lines(L.tr, col="blue", lty="dashed")
+#Predicted values of transformed data
+points((length(JNJr)+1):(length(JNJr)+100), pred$pred, col="red")
+abline(h=0,col='red')
+```
+```{r}
+MRKr<-ts(returns[,5],frequency=365)[c(1:1218)]
+
+ts.plot(MRKr)
+```
+
+```{r}
+ts.plot(MRKr,xlim=c(1100,length(MRKr))+100,ylim=c(-0.2,0.2), main='Time Series Forcast On MRK Stock Returns',xlab='Time Points',ylab='MRK stock returns')
+lines(U.tr, col="blue", lty="dashed")
+lines(L.tr, col="blue", lty="dashed")
+#Predicted values of transformed data
+points((length(MRKr)+1):(length(MRKr)+100), pred$pred, col="red")
+abline(h=0,col='red')
+```
+```{r}
+NVSr<-ts(returns[,6],frequency=365)[c(1:1218)]
+
+ts.plot(NVSr)
+```
+
+```{r}
+ts.plot(NVSr,xlim=c(1100,length(NVSr))+100,ylim=c(-0.2,0.2), main='Time Series Forcast On NVS Stock Returns',xlab='Time Points',ylab='NVS Stock Returns')
+lines(U.tr, col="blue", lty="dashed")
+lines(L.tr, col="blue", lty="dashed")
+#Predicted values of transformed data
+points((length(NVSr)+1):(length(NVSr)+100), pred$pred, col="red")
+abline(h=0,col='red')
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
